@@ -17,14 +17,15 @@ class dirScan:
             "Referer":"https://www.baidu.com/",
             "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36"
                        } 
-        self.url_keyword_file = 'url_keyword.dict'
-        self.file_keyword_file = 'file_keyword.dict'
+        self.url_keyword_file = 'url_keyword2.dict'#'url_test.dict'
+        self.file_keyword_file = 'file_keyword2.dict'#'file_test.dict'
         self.thread_num = 10
         self.save_file_keywords = ['']
         self.save_url_keywords = ['']
         self.target_url = "http://baidu.com"
         self.scan_level = -1
         self.file_ext = 'php'
+        self.bak_ext = ['zip','rar','tar','tar.gz']
         self.STOP_FILE = False #禁止文件扫描
         self.STOP_URL = False  #禁止目录扫描
         self.msg_queue = queue.Queue()
@@ -43,7 +44,7 @@ class dirScan:
             req = requests.get(url,headers=self.headers,timeout=self.timeout,proxies=self.proxy)
             code = req.status_code
         except:
-            code = 520 #网络不可达
+            code = 520 #网络不可达 
         return code
 
     def _get_urlkeyword(self):
@@ -60,7 +61,6 @@ class dirScan:
 
     def _get_console_width(self):
         return int(os.popen('stty size','r').read().split()[-1])
-        #return 173
     
     def _print_msg(self):
         _console_width = self._get_console_width()
@@ -73,6 +73,8 @@ class dirScan:
                 sys.stdout.write('\r'+_msg[4:].ljust(_console_width-20)+'\n')
             else:
                 sys.stdout.write('\r'+_msg.ljust(_console_width-20))
+
+        
                         
     def set_proxy(self,proxy):
         """设置代理{'http':'http://127.0.0.1:8080','https','https://127.0.0.1:8080'}"""
@@ -131,11 +133,12 @@ class dirScan:
             key = key.strip()
             url = self.target_url + key if self.target_url[-1] == '/' or key[0] == '/' else self.target_url+ '/' + key
             self.msg_queue.put(url)
-            if self._req_code(url) in [200,403]:
+            code = self._req_code(url)
+            if int(code) in [200,403]:
                 self.msg_queue.put('true'+url)
-                if url.split('.')[-1] != self.file_ext: #判断是文件还是目录
+                if url.split('/')[-1].find('.') == -1: #判断是文件还是目录
                     self.save_url_keywords.append(key)
-                #print(url)
+    
     def saveKey_and_urlKey(self,keywords):
         """合成扫描路径字典"""
         and_keys = []
@@ -152,8 +155,12 @@ class dirScan:
         for fk in filekeys:
             for sk in keywords:
                 and_keys.append(sk+'/'+fk+'.'+self.file_ext)
+        for sk in keywords: #加入目录名为备份的可能
+            for ext in self.bak_ext:
+                and_keys.append(sk+'/'+sk.split('/')[-1]+'.'+ext)
         return and_keys  
     def scan(self,url,ext='php'):
+        self.num = 1
         self.set_target_url(url)
         self.set_file_ext(ext)
         if self._check_404(url):
@@ -172,9 +179,9 @@ class dirScan:
                 scan_list = url_keywords + file_keywords  #生成下一层路径字典 + 文件字典
             self.save_url_keywords = []
             self.scan_level = self.scan_level - 1
-            count = math.ceil(len(file_keywords)/self.thread_num)
+            count = math.ceil(len(scan_list)/self.thread_num)
             thread_list = []
-            for n in range(self.thread_num):
+            for n in range(self.thread_num+1):
                 thread_list.append(threading.Thread(target=self.url_keyword_scan,args=(scan_list[n*count:(n+1)*count],)))
             for t in thread_list:
                 t.start()

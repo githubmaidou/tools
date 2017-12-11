@@ -17,8 +17,8 @@ class dirScan:
             "Referer":"https://www.baidu.com/",
             "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36"
                        } 
-        self.url_keyword_file = 'url_keyword2.dict'#'url_test.dict'
-        self.file_keyword_file = 'file_keyword2.dict'#'file_test.dict'
+        self.url_keyword_file = 'url_keyword.dict'#'url_test.dict'
+        self.file_keyword_file = 'file_keyword.dict'#'file_test.dict'
         self.thread_num = 10
         self.save_file_keywords = ['']
         self.save_url_keywords = ['']

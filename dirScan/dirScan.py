@@ -61,6 +61,17 @@ class dirScan:
 
     def _get_console_width(self):
         return int(os.popen('stty size','r').read().split()[-1])
+
+    def _get_script_language(self,url):
+        php = url + '/index.php'
+        asp = url + '/index.asp'
+        aspx = url + '/index.aspx'
+        jsp = url + '/index.jsp'
+        scripts = {'asp':asp,'aspx':aspx,'php':php,'jsp':jsp}
+        for k,v in scripts.items():
+            if self._req_code(v) in [200,401]:
+                return k
+        return 'php'
     
     def _print_msg(self):
         _console_width = self._get_console_width()
@@ -159,14 +170,17 @@ class dirScan:
             for ext in self.bak_ext:
                 and_keys.append(sk+'/'+sk.split('/')[-1]+'.'+ext)
         return and_keys  
-    def scan(self,url,ext='php'):
+    def scan(self,url,ext=False):
         self.num = 1
         self.set_target_url(url)
-        self.set_file_ext(ext)
         if self._check_404(url):
                 self.msg_queue.put("true目标(%s)有404跳转或没有网络" % url)
                 self.STOP_ME = True
                 exit()
+        if ext:
+            self.set_file_ext(ext)
+        else:
+            self.set_file_ext(self._get_script_language(self.target_url))
         while (len(self.save_url_keywords) > 0 and self.scan_level != 0):
             file_keywords = self.saveKey_and_fileKey(self.save_url_keywords) #生成下一层文件字典
             url_keywords = self.saveKey_and_urlKey(self.save_url_keywords)
@@ -194,6 +208,6 @@ s.set_thread(50)
 s.set_scan_level(2)
 #s.set_stop_file() #关闭文件扫描
 #s.set_stop_url() #关闭目录扫描
-s.scan('http://192.168.56.101','php')
+s.scan('http://beijing.buaa.edu.cn/')
      
         

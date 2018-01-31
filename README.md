@@ -7,6 +7,7 @@
 	shodan.py                   用shadan接口查询ip开放端口，shodan.py 127.0.0.1 支持C段shodan.py 127.0.0.0/24</br>		
 	/dirScan		    目录扫描项目
 	/passf0j0f                  根据关键字生成密码</br>
+	/cmd_bash                   常用的命令语句	
 	/workflows                  Alfred workflows插件</br>
 		/strencode.py           alfred workflows,字符编码/解码小插件,支持Md5,Base64,Hex,ASCII的编码与解码</br>
 

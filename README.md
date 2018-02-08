@@ -5,7 +5,8 @@
 	scanTitle.py                批量获取域名标题 scanTitle.py urls.txt 10 (线程)</br>
 	bingC.py                    用bing搜索的ip指令进行ip到域名的反查 bingC.py 127.0.0.1</br>
 	shodan.py                   用shadan接口查询ip开放端口，shodan.py 127.0.0.1 支持C段shodan.py 127.0.0.0/24</br>	
-	getKeyword.py               获取网页内容，生成关键字，和passf0j0f项目可以一起用，生成密码字典；需要pypinyin,jieba,tldextract库	
+	getKeyword.py               获取网页内容，生成关键字，和passf0j0f项目可以一起用，生成密码字典；需要pypinyin,jieba,tldextract库
+	ip138.py		    用ip138接口实现ip历史解析记录与子域名查询 ip138.py 127.1.1.1或github.com 	
 	/dirScan		    目录扫描项目
 	/passf0j0f                  根据关键字生成密码</br>
 	/cmd_bash                   常用的命令语句	

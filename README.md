@@ -7,7 +7,7 @@
 	shodan.py                   用shadan接口查询ip开放端口，shodan.py 127.0.0.1 支持C段shodan.py 127.0.0.0/24</br>	
 	getKeyword.py               获取网页内容，生成关键字，和passf0j0f项目可以一起用，生成密码字典；需要pypinyin,jieba,tldextract库
 	ip138.py		    用ip138接口实现ip历史解析记录与子域名查询 ip138.py 127.1.1.1或github.com 
-	dns.py			copy以前乌云的代码。加一个A记录xxxx.domain.com指向服务器ip,再加一个ns记录dnslog.domain.com,指向xxxx.domain.com。test.dnslog.domain.com
+	dns.py			    copy以前乌云的代码。加一个A记录xxxx.domain.com指向服务器ip,再加一个ns记录dnslog.domain.com,指向xxxx.domain.com。test.dnslog.domain.com
 	/dirScan		    目录扫描项目
 	/passf0j0f                  根据关键字生成密码</br>
 	/cmd_bash                   常用的命令语句	

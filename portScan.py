@@ -73,7 +73,7 @@ if __name__ == '__main__':
             for p in port_list:
                 threads.append(threading.Thread(target=scan,args=(i,p)))
         for t in tqdm(threads):
-            while threading.activeCount() >= int(thread_num):
+            while threading.activeCount()-3 >= int(thread_num):
             #    #print(threading.activeCount())
                 time.sleep(0.1)
             #    #continue 

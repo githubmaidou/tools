@@ -9,7 +9,8 @@
 	ip138.py		    用ip138接口实现ip历史解析记录与子域名查询 ip138.py 127.1.1.1或github.com 
 	dns.py			    copy以前乌云的代码。加一个A记录xxxx.domain.com指向服务器ip,再加一个ns记录dnslog.domain.com,指向xxxx.domain.com。test.dnslog.domain.com
 	domain2ip.py		    使用socket.gethostbyname 查询域名对应ip。domain2ip.py domains.dict
-	portScan.py		    如果目标是windows且将所有未开放的端口全转发到一个端口上，NMAP将显示说有端口开放。portScan.py -t 127.0.0.1-100 -p 80,8000-10000 -n 100  
+	portScan.py		    如果目标是windows且将所有未开放的端口全转发到一个端口上，NMAP将显示说有端口开放。portScan.py -t 127.0.0.1-100 -p 80,8000-10000 -n 100 
+	ip2domains.py		使用virustotal.com的查询接口，实现ip反查域名，子域名查询。效果不错
 	/dirScan		    目录扫描项目
 	/passf0j0f                  根据关键字生成密码</br>
 	/cmd_bash                   常用的命令语句	

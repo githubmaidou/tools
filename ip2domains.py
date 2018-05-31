@@ -3,13 +3,14 @@ import json
 import re
 import socket
 import sys
+import asyncio
 #https://www.virustotal.com/ui/ip_addresses/216.160.212.12/resolutions	#ip2domins
 #https://www.virustotal.com/ui/domains/hao123.com/subdomains			#domain@subdomains
 #https://www.virustotal.com/vtapi/v2/domain/report?apikey=<apikey>&domain=<domain>
 #https://www.virustotal.com/vtapi/v2/ip-address/report?apikey=<apikey>&ip=<ip>
 class ipDomain:
 	def __init__(self,target):
-		self.apikey = 'apikey'
+		self.apikey = ''
 		self.target = target
 		self.IP_DOMAINS = True #默认
 		self.DOMAIN_SUBDOMAINS = False
@@ -60,37 +61,41 @@ class ipDomain:
 		else:
 			return ""
 
-	def __domain_ip(self,domain):
+	async def __domain_ip(self,loop,domain):
+		socket.setdefaulttimeout(2)
 		try:
-			ip = socket.gethostbyname(domain)
-			return ip
+			info = await loop.getaddrinfo(
+            domain,80,
+            proto=socket.IPPROTO_TCP,
+        )
+			ip = info[0][4][0]
+			print((ip,domain))
 		except Exception as e:
-			print("Function %s Err: %s" % (sys._getframe().f_code.co_name,e))
-			return "127.0.0.1"
+			#print("Function %s Err: %s" % (sys._getframe().f_code.co_name,e))
+			print(("127.0.0.1",domain))
 
 
 	def __get_data(self,json_text):
 		out_list = []
+		loop = asyncio.get_event_loop()
 		if not json_text:return out_list
 		if self.METHOD == "IP":
 			for j in json_text['resolutions']:
 				ip = self.target
 				subdomain = j['hostname']
-				out_list.append((ip,subdomain))
+				print((ip,subdomain))
 		elif self.METHOD == "DOMAIN":
+			tasks = []
 			for j in json_text['subdomains']:
-				subdomain = j
-				ip = self.__domain_ip(subdomain)
-				out_list.append((ip,subdomain))
-		return out_list
+				tasks.append(self.__domain_ip(loop,j))
+			loop.run_until_complete(asyncio.wait(tasks))
+			loop.close()
 
 	def scan(self):
 		next_link = self.URL_API
 		out_list = []
 		json_text = self.__str_json(self.__get_html(next_link))
-		out_list = out_list + self.__get_data(json_text)
-		for i in out_list:
-			print(i)
+		self.__get_data(json_text)
 
 
 

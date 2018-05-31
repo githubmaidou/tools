@@ -5,17 +5,18 @@ import socket
 import sys
 #https://www.virustotal.com/ui/ip_addresses/216.160.212.12/resolutions	#ip2domins
 #https://www.virustotal.com/ui/domains/hao123.com/subdomains			#domain@subdomains
+#https://www.virustotal.com/vtapi/v2/domain/report?apikey=<apikey>&domain=<domain>
+#https://www.virustotal.com/vtapi/v2/ip-address/report?apikey=<apikey>&ip=<ip>
 class ipDomain:
 	def __init__(self,target):
+		self.apikey = 'apikey'
 		self.target = target
 		self.IP_DOMAINS = True #默认
 		self.DOMAIN_SUBDOMAINS = False
-		self.URL_API_IP = "https://www.virustotal.com/ui/ip_addresses/%target%/resolutions" 
-		self.URL_API_DOMAIN = "https://www.virustotal.com/ui/domains/%target%/subdomains" 
+		self.URL_API_IP = "https://www.virustotal.com/vtapi/v2/ip-address/report?apikey=%s&ip=%%target%%" % (self.apikey)
+		self.URL_API_DOMAIN = "https://www.virustotal.com/vtapi/v2/domain/report?apikey=%s&domain=%%target%%" % (self.apikey) 
 		self.METHOD = "IP" if self.__checkip(self.target) else "DOMAIN"
 		self.URL_API = self.URL_API_IP.replace('%target%',self.target) if self.METHOD == "IP" else self.URL_API_DOMAIN.replace('%target%',self.target)
-		print(self.target)
-		print(self.METHOD)
 		self.scan()
 
 
@@ -38,7 +39,7 @@ class ipDomain:
 	def __str_json(self,json_str):
 		try:
 			json_text = json.loads(json_str)
-			if "data" not in json_text.keys():
+			if "resolutions" not in json_text.keys():
 				return ""
 			else:
 				return json_text
@@ -72,13 +73,13 @@ class ipDomain:
 		out_list = []
 		if not json_text:return out_list
 		if self.METHOD == "IP":
-			for j in json_text['data']:
+			for j in json_text['resolutions']:
 				ip = self.target
-				subdomain = j['attributes']['host_name']
+				subdomain = j['hostname']
 				out_list.append((ip,subdomain))
 		elif self.METHOD == "DOMAIN":
-			for j in json_text['data']:
-				subdomain = j['id']
+			for j in json_text['subdomains']:
+				subdomain = j
 				ip = self.__domain_ip(subdomain)
 				out_list.append((ip,subdomain))
 		return out_list
@@ -86,10 +87,8 @@ class ipDomain:
 	def scan(self):
 		next_link = self.URL_API
 		out_list = []
-		while next_link:
-			json_text = self.__str_json(self.__get_html(next_link))
-			out_list = out_list + self.__get_data(json_text)
-			next_link = self.__get_next(json_text)
+		json_text = self.__str_json(self.__get_html(next_link))
+		out_list = out_list + self.__get_data(json_text)
 		for i in out_list:
 			print(i)
 

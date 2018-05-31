@@ -14,8 +14,8 @@ class ipDomain:
 		self.target = target
 		self.IP_DOMAINS = True #默认
 		self.DOMAIN_SUBDOMAINS = False
-		self.URL_API_IP = "https://www.virustotal.com/vtapi/v2/ip-address/report?apikey=%s&ip=%%target%%" % (self.apikey)
-		self.URL_API_DOMAIN = "https://www.virustotal.com/vtapi/v2/domain/report?apikey=%s&domain=%%target%%" % (self.apikey) 
+		self.URL_API_IP = "https://try.readme.io/https://www.virustotal.com/vtapi/v2/ip-address/report?apikey=%s&ip=%%target%%" % (self.apikey)
+		self.URL_API_DOMAIN = "https://try.readme.io/https://www.virustotal.com/vtapi/v2/domain/report?apikey=%s&domain=%%target%%" % (self.apikey) 
 		self.METHOD = "IP" if self.__checkip(self.target) else "DOMAIN"
 		self.URL_API = self.URL_API_IP.replace('%target%',self.target) if self.METHOD == "IP" else self.URL_API_DOMAIN.replace('%target%',self.target)
 		self.scan()
@@ -30,7 +30,8 @@ class ipDomain:
 
 	def __get_html(sefl,url):
 		try:
-			req = requests.get(url,timeout=5)
+			headers = {'Origin': 'https://developers.virustotal.com'}
+			req = requests.get(url,headers=headers,timeout=5)
 			html = req.text
 			return html
 		except Exception as e:

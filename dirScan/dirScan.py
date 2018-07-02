@@ -60,7 +60,7 @@ class dirScan:
         return [i.strip() for i in file_keywords]
 
     def _get_console_width(self):
-        return int(os.popen('stty size','r').read().split()[-1])
+        return int(os.get_terminal_size().columns)
 
     def _get_script_language(self,url):
         php = url + '/index.php'
@@ -94,6 +94,10 @@ class dirScan:
     def set_timeout(self,t):
         """设置请求超时时间"""
         self.timeout = t
+
+    def set_stop_me(self,t=True):
+        """关闭输出"""
+        self.STOP_ME=t
 
     def set_headers(self,headers):
         """设置headers头dict类型"""
@@ -203,11 +207,37 @@ class dirScan:
                 t.join()
         self.msg_queue.put('trueScan End')
         self.STOP_ME = True
-s = dirScan()
-s.set_thread(50)
-s.set_scan_level(2)
-#s.set_stop_file() #关闭文件扫描
-#s.set_stop_url() #关闭目录扫描
-s.scan('http://beijing.buaa.edu.cn/')
-     
-        
+def get_argv(alist,astr):
+    if astr in alist:
+        try:
+            return alist[alist.index(astr)+1]
+        except:
+            print("%s 参数错误" % astr)
+            return False
+    else:
+        return False
+def in_argv(alist,astr):
+    if astr in alist:
+        return True
+    else:
+        return False
+if __name__ == '__main__':
+    s = dirScan()
+    t = get_argv(sys.argv,'-t')
+    s.set_thread(50) if not t else s.set_thread(int(t))
+    l = get_argv(sys.argv,'-l')
+    s.set_scan_level(2) if not l else s.set_scan_level(l)
+    url = get_argv(sys.argv,'-u')
+    e = False if not in_argv(sys.argv,'-e') else get_argv(sys.argv,'-e')
+    if in_argv(sys.argv,'-fc'):s.set_stop_file() 
+    if in_argv(sys.argv,'-dc'):s.set_stop_url()
+    if not in_argv(sys.argv,'-u') or in_argv(sys.argv,'-h'):
+        print("-t       指定线程")
+        print("-l       指定扫描深度")
+        print("-u       指定目标URL")
+        print("-e       指定文件后缀")
+        print("-fc      关闭文件扫描")
+        print("-dc      关闭目录扫描")
+        s.set_stop_me()
+    else:
+        s.scan(url,e)

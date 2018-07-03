@@ -226,7 +226,7 @@ if __name__ == '__main__':
     t = get_argv(sys.argv,'-t')
     s.set_thread(50) if not t else s.set_thread(int(t))
     l = get_argv(sys.argv,'-l')
-    s.set_scan_level(2) if not l else s.set_scan_level(l)
+    s.set_scan_level(2) if not l else s.set_scan_level(int(l))
     url = get_argv(sys.argv,'-u')
     e = False if not in_argv(sys.argv,'-e') else get_argv(sys.argv,'-e')
     if in_argv(sys.argv,'-fc'):s.set_stop_file() 

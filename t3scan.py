@@ -23,11 +23,12 @@ class t3scan:
             try:
                 line = await asyncio.wait_for(r.readline(), 3)
             except:
+                w.close()
                 return ""
             w.close()
             if line:
                 r = re.search(
-                    r"^(HELO:|LGIN:|SERV:|UNAV:|LICN:|RESC:|VERS:|VERS:|CATA:|CMND:)((\d{1,2}\.\d{1,2}\.\d{1,2})|)", line.decode())
+                    r"^(HELO:|LGIN:|SERV:|UNAV:|LICN:|RESC:|VERS:|CATA:|CMND:)((\d{1,2}\.\d{1,2}\.\d{1,2})|)", line.decode())
                 if r:
                     print("%s 存在T3协议 %s" % (ip, r.group(2)))
 
@@ -72,7 +73,7 @@ def in_argv(alist, astr):
 
 if __name__ == '__main__':
     alist = sys.argv
-    snum = 50 if not in_argv(alist, '-t') else get_argv(alist, '-t')
+    snum = 10 if not in_argv(alist, '-t') else get_argv(alist, '-t')
     filepath = None if not in_argv(alist, '-f') else get_argv(alist, '-f')
     split = None if not in_argv(alist, '-p') else get_argv(alist, '-p')
     t3 = t3scan(snum)

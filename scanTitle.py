@@ -1,5 +1,5 @@
 import sys,requests,threading,re,math
-
+title= []
 def getUrls(filename):
     f = open(filename,'r',encoding="utf8")
     lines = f.readlines()
@@ -23,8 +23,8 @@ def getTitle(urls):
             title_re = re.search(r"<title>(.*?)</title>", html)
             if title_re:
                 title = title_re.group(1)
-                print(url,title)
-def start(filename,threads):
+                title.append((url,title))
+def start(filename,threads=1):
     urls = getUrls(filename)
     count = math.ceil(len(urls)/float(threads))
     ths = []
@@ -32,4 +32,9 @@ def start(filename,threads):
         ths.append(threading.Thread(target=getTitle,args=(urls[count*(t-1):count*t],)))
     for t in ths:
         t.start()
-start(sys.argv[1],sys.argv[2])
+if len(sys.argv) >2:
+    start(sys.argv[1],sys.argv[2]) 
+else:
+    start(sys.argv[1])
+for t in title:
+    print(t)

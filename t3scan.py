@@ -9,6 +9,11 @@ class t3scan:
     def __init__(self, snum=50):
         self.t3str = "t3 12.1.2\nAS:2048\nHL:19\n\n"
         self.snum = int(snum)
+        if os.name == 'nt':
+            self.loop = asyncio.ProactorEventLoop() # for subprocess' pipes on Windows
+            asyncio.set_event_loop(self.loop)
+        else:
+            self.loop = asyncio.get_event_loop()
 
     async def __send_t3(self, ip, port):
         sem = asyncio.Semaphore(self.snum)
@@ -30,7 +35,7 @@ class t3scan:
                 r = re.search(
                     r"^(HELO:|LGIN:|SERV:|UNAV:|LICN:|RESC:|VERS:|CATA:|CMND:)((\d{1,2}\.\d{1,2}\.\d{1,2})|)", line.decode())
                 if r:
-                    print("%s 存在T3协议 %s" % (ip, r.group(2)))
+                    print("%s:%s 存在T3协议 %s" % (ip,port,r.group(2)))
 
     def fileScan(self, path, sp=None):
         tasks = []
@@ -41,16 +46,14 @@ class t3scan:
                 ip = line[0].strip()
                 port = line[-1].strip()
                 tasks.append(self.__send_t3(ip, port))
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(asyncio.wait(tasks))
-            loop.close()
+            self.loop.run_until_complete(asyncio.wait(tasks))
+            self.loop.close()
         else:
             print("文件%s 不存在" % path)
 
     def scan(self, ip, port):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.__send_t3(ip, port))
-        loop.close()
+        self.loop.run_until_complete(self.__send_t3(ip, port))
+        self.loop.close()
 
 
 def get_argv(alist, astr):
@@ -82,7 +85,7 @@ if __name__ == '__main__':
     elif not split and not filepath and len(alist) == 3:
         t3.scan(sys.argv[1], sys.argv[2])
     else:
-        print("-t 指定并发数,默认50")
+        print("-t 指定并发数,默认10")
         print("-f 指定读取文件")
         print("-p 指定ip&port分割符，如果是空格分割不用此参数")
         print("%s 127.0.0.1 7001 单目标检测" % alist[0])

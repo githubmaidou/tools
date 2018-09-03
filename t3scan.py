@@ -89,3 +89,4 @@ if __name__ == '__main__':
         print("-f 指定读取文件")
         print("-p 指定ip&port分割符，如果是空格分割不用此参数")
         print("%s 127.0.0.1 7001 单目标检测" % alist[0])
+        exit()

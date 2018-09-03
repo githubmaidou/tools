@@ -84,6 +84,6 @@ if __name__ == '__main__':
         STOP_ME=True
             
     else:
-        msg_queue.pul("%s -t 127.0.0.1 -p 80,88,8080-9000" % options[0])
-        msg_queue.pul("%s -t 127.0.0.1-100 -p 80,88,8080-9000" % options[0])
+        msg_queue.put("%s -t 127.0.0.1 -p 80,88,8080-9000" % options[0])
+        msg_queue.put("%s -t 127.0.0.1-100 -p 80,88,8080-9000" % options[0])
         STOP_ME=True

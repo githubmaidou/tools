@@ -28,6 +28,7 @@ class dirScan:
         self.bak_ext = ['zip','rar','tar','tar.gz']
         self.STOP_FILE = False #禁止文件扫描
         self.STOP_URL = False  #禁止目录扫描
+        self.status_code = [200,403]
         self.msg_queue = queue.Queue()
         self.STOP_ME = False
         threading.Thread(target=self._print_msg).start()#日志输出
@@ -134,7 +135,11 @@ class dirScan:
     def set_stop_url(self,bo = True):
         """是否扫描目录,默认开启"""
         self.STOP_URL = bo
-
+    def set_status_code(self,codes):
+        """设置返回正常的状态码"""
+        self.status_code = codes
+        print(self.status_code)
+ 
     def set_url_scan_file(self,path):
         """设置目录扫描字典文件路径"""
         self.url_keyword_file = path
@@ -149,7 +154,7 @@ class dirScan:
             url = self.target_url + key if self.target_url[-1] == '/' or key[0] == '/' else self.target_url+ '/' + key
             self.msg_queue.put(url)
             code = self._req_code(url)
-            if int(code) in [200,403]:
+            if int(code) in self.status_code:
                 self.msg_queue.put('true'+url)
                 if url.split('/')[-1].find('.') == -1: #判断是文件还是目录
                     self.save_url_keywords.append(key)
@@ -225,6 +230,8 @@ if __name__ == '__main__':
     s = dirScan()
     t = get_argv(sys.argv,'-t')
     s.set_thread(50) if not t else s.set_thread(int(t))
+    c = get_argv(sys.argv,'-c')
+    s.set_status_code([200,403]) if not c else s.set_status_code([int(i) for i in c.strip().split(',')])
     l = get_argv(sys.argv,'-l')
     s.set_scan_level(2) if not l else s.set_scan_level(int(l))
     url = get_argv(sys.argv,'-u')
@@ -233,6 +240,7 @@ if __name__ == '__main__':
     if in_argv(sys.argv,'-dc'):s.set_stop_url()
     if not in_argv(sys.argv,'-u') or in_argv(sys.argv,'-h'):
         print("-t       指定线程")
+        print("-c       指定返回HTTP状态码eg:-c 200,500")
         print("-l       指定扫描深度")
         print("-u       指定目标URL")
         print("-e       指定文件后缀")

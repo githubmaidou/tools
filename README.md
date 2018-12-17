@@ -12,6 +12,7 @@
 	portScan.py		    如果目标是windows且将所有未开放的端口全转发到一个端口上，NMAP将显示说有端口开放。portScan.py -t 127.0.0.1-100 -p 80,8000-10000 -n 100 
 	ip2domains.py		    使用virustotal.com的查询接口，实现ip反查域名，子域名查询。效果不错
 	t3scan.py		    T3协议扫描，建议使用64位python
+	nmap_oG.py		    对nmap -oG 的输出进行格式化127.0.0.1:80
 	/dirScan		    目录扫描项目
 	/passdict                  根据关键字生成密码
 	/cmd_bash                   常用的命令语句

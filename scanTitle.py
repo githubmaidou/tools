@@ -1,5 +1,4 @@
 import sys,requests,threading,re,math
-title= []
 def getUrls(filename):
     f = open(filename,'r',encoding="utf8")
     lines = f.readlines()
@@ -14,7 +13,7 @@ def getTitle(urls):
                 r = requests.get(url,timeout=10)
             except:
                 url = 'https://' + url.strip() if url[:5] != 'https' else url.strip()
-                r = requests.get(url,timeout=10)
+                r = requests.get(url,timeout=10,verify=False)
         except Exception as e:
             continue
         if r.status_code == 200:
@@ -22,9 +21,9 @@ def getTitle(urls):
             html = r.text
             title_re = re.search(r"<title>(.*?)</title>", html)
             if title_re:
-                title = title_re.group(1)
-                title.append((url,title))
-def start(filename,threads=1):
+                t = title_re.group(1)
+                print(url,t)
+def start(filename,threads=2):
     urls = getUrls(filename)
     count = math.ceil(len(urls)/float(threads))
     ths = []
@@ -36,5 +35,3 @@ if len(sys.argv) >2:
     start(sys.argv[1],sys.argv[2]) 
 else:
     start(sys.argv[1])
-for t in title:
-    print(t)

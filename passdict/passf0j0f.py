@@ -63,7 +63,7 @@ class password:
 
     def add_pass(self):
         pass_file_hand = open('dict/password.dict')
-        pass_list = pass_file.hand.readlines()
+        pass_list = pass_file_hand.readlines()
         pass_file_hand.close()
         for pass_line in pass_list:
             self.pass_list.append(pass_line.strip())

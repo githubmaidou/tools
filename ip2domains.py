@@ -4,13 +4,14 @@ import re
 import socket
 import sys
 import asyncio
+import config
 #https://www.virustotal.com/ui/ip_addresses/216.160.212.12/resolutions	#ip2domins
 #https://www.virustotal.com/ui/domains/hao123.com/subdomains			#domain@subdomains
 #https://www.virustotal.com/vtapi/v2/domain/report?apikey=<apikey>&domain=<domain>
 #https://www.virustotal.com/vtapi/v2/ip-address/report?apikey=<apikey>&ip=<ip>
 class ipDomain:
 	def __init__(self,target):
-		self.apikey = ''
+		self.apikey = config.vt_key
 		self.target = target
 		self.IP_DOMAINS = True #默认
 		self.DOMAIN_SUBDOMAINS = False
@@ -35,7 +36,7 @@ class ipDomain:
 			html = req.text
 			return html
 		except Exception as e:
-			print("Function %s Err: %s" % (sys._getframe().f_code.co_name,e))
+			#print("Function %s Err: %s" % (sys._getframe().f_code.co_name,e))
 			return ""
 
 	def __str_json(self,json_str):

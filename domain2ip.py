@@ -1,14 +1,15 @@
 import socket
 import sys
+import time
 def domain2ip(domain_file):
-    try:
-        domains = open(domain_file).readlines()
-        for domain in domains:
-            domain = domain.strip()
+    domains = open(domain_file,'r').readlines()
+    for domain in domains:
+        domain = domain.strip()
+        try:
             ip = socket.gethostbyname(domain)
-            print(ip,domain)
-    except Exception as e:
-        print(e)
+        except:
+            ip = '127.0.0.1'
+        print(ip,domain)
 
 if __name__ == '__main__':
     domain2ip(sys.argv[1])

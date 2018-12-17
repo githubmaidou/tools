@@ -15,7 +15,7 @@ class dirScan:
             "Accept-Encoding":"gzip",
             "Accept-Language":"zh-CN,zh;q=0.8",
             "Referer":"https://www.baidu.com/",
-            "User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36"
+            "User-Agent":"Mozilla/5.0 (Linux;u;Android 4.2.2;zh-cn;) AppleWebKit/534.46 (KHTML,like Gecko) Version/5.1 Mobile Safari/10600.6.3 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)"
                        } 
         self.url_keyword_file = 'url_keyword.dict'#'url_test.dict'
         self.file_keyword_file = 'file_keyword.dict'#'file_test.dict'

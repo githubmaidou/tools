@@ -13,6 +13,7 @@
 	ip2domains.py		    使用virustotal.com的查询接口，实现ip反查域名，子域名查询。效果不错
 	t3scan.py		    T3协议扫描，建议使用64位python
 	nmap_oG.py		    对nmap -oG 的输出进行格式化127.0.0.1:80
+	shellcode_injection.py	    shellcode注入工具,用pyinstaller转成exe后可免杀。使用：shellcode_injection.exe notepad.exe[进程名]，可先起一个notepad
 	/dirScan		    目录扫描项目
 	/passdict                  根据关键字生成密码
 	/cmd_bash                   常用的命令语句

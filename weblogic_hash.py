@@ -45,7 +45,7 @@ if len(sys.argv) == 2:
     get_path(sys.argv[1])
 elif len(sys.argv) == 4:
     args = sys.argv[1:]
-    get_path(**args)
+    get_path(*args)
 else:
     print("%s AdminServer" % __file__)
     print("%s AdminServer bea_wls_internal bea_wls_internal.war" % __file__)

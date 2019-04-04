@@ -17,6 +17,7 @@
 	shellcode_injection.exe	    将shellcode_injection.py转exe生成，使用：shellcode_injection.exe shellcode[\xff] 进程名
 	weblogic_hash.py	    weblogic 6位随机路径名计算
         chunked.py		    复制t00ls w8ayy写的分块传输脚本。chunked.py "id=1' and 1=1 and ''='"
+        ips2ipc.py		    ips2ipc.py /tmp/ip 把文件/tmp/ip内的独立IP转换成ip段,127.0.0.1;127.0.0.100 转换成127.0.0.1-100
 	/dirScan		    目录扫描项目
 	/passdict                  根据关键字生成密码
 	/cmd_bash                   常用的命令语句

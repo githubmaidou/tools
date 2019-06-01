@@ -3,6 +3,7 @@ import re
 import math
 import sys
 import time
+from urllib import parse
 from bs4 import BeautifulSoup
 headers = { "Accept":"text/html,application/xhtml+xml,application/xml;",
             "Accept-Encoding":"gzip",
@@ -21,14 +22,15 @@ def get_pagenum(url,site=False):
 		if r:
 			num = r.group(1)
 		else:
-			num = '0'
+			num = '75'
 		num = int(num.replace(",",""))
 		return(num)
 	except Exception as e:
 		print(e)
 		return 0
 def set_keyword(keyword,site=False,gpc="0"):
-	http = "https://www.baidu.com/s?wd=%s&gpc=%s&ie=utf-8" % (keyword,gpc)
+	http = "http://www.baidu.com/s?wd=%s&gpc=%s&ie=utf-8" % (parse.quote(keyword),gpc)
+	print(http)
 	return http
 def search(keyword,site=False,gpc="0"):
 	"""gpc为搜索时间参数"""
@@ -50,6 +52,8 @@ def search(keyword,site=False,gpc="0"):
 		http = url + "&pn=%s" % (i*10)
 		req = requests.get(http,headers=headers)
 		text = req.text
+		if '下一页&gt;' not in text:
+			return urls
 		soup = BeautifulSoup(text,"html.parser")
 		b_list = soup.find_all("a",class_="c-showurl") #baidu 跳转地址
 		for b in b_list:
@@ -61,4 +65,6 @@ def search(keyword,site=False,gpc="0"):
 if len(sys.argv) > 2:
 	print(search(sys.argv[1],gpc=sys.argv[2]))
 else:
-	print(search(sys.argv[1]))
+	urls = search(sys.argv[1])
+	for url in urls:
+		print(url)

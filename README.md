@@ -16,8 +16,9 @@
 	shellcode_injection.py	    shellcode注入工具,用pyinstaller转成exe后可免杀。使用：shellcode_injection.exe notepad.exe[进程名]，可先起一个notepad
 	shellcode_injection.exe	    将shellcode_injection.py转exe生成，使用：shellcode_injection.exe shellcode[\xff] 进程名
 	weblogic_hash.py	    weblogic 6位随机路径名计算
-        chunked.py		    复制t00ls w8ayy写的分块传输脚本。chunked.py "id=1' and 1=1 and ''='"
-        ips2ipc.py		    ips2ipc.py /tmp/ip 把文件/tmp/ip内的独立IP转换成ip段,127.0.0.1;127.0.0.100 转换成127.0.0.1-100
+    chunked.py		    复制t00ls w8ayy写的分块传输脚本。chunked.py "id=1' and 1=1 and ''='"
+    ips2ipc.py		    ips2ipc.py /tmp/ip 把文件/tmp/ip内的独立IP转换成ip段,127.0.0.1;127.0.0.100 转换成127.0.0.1-100
+	brute.py 			爆破工具，暂时只支持ssh
 	/dirScan		    目录扫描项目
 	/passdict                  根据关键字生成密码
 	/cmd_bash                   常用的命令语句

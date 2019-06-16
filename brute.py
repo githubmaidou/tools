@@ -23,7 +23,7 @@ class brute():
 			ssh_client = SSHClient()
 			ssh_client.set_missing_host_key_policy(AutoAddPolicy())
 			ssh_client.connect(hostname=str(host),port=self.port,username=user,password=passwd)
-			print("check sessus:%s %s %s" % (host,user,passwd))
+			print("check success:%s %s %s" % (host,user,passwd))
 		except:
 			pass
 		self.lock.acquire()

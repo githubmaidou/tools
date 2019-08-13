@@ -19,10 +19,12 @@
     chunked.py		    复制t00ls w8ayy写的分块传输脚本。chunked.py "id=1' and 1=1 and ''='"
     ips2ipc.py		    ips2ipc.py /tmp/ip 把文件/tmp/ip内的独立IP转换成ip段,127.0.0.1;127.0.0.100 转换成127.0.0.1-100
 	brute.py 			爆破工具，暂时只支持ssh
+	sub.py				多个接口查询子域名
+	iis_shortname_Scan.py	复制lijiejie的iis短文件名漏洞利用工具
 	/dirScan		    目录扫描项目
 	/passdict                  根据关键字生成密码
 	/cmd_bash                   常用的命令语句
-	/burpext		    burp 插件。报错SQL注入检测、	
+	/burpext		    burp 插件。报错SQL注入检测	
 	/workflows                  Alfred workflows插件
 		/strencode.py           alfred workflows,字符编码/解码小插件,支持Md5,Base64,Hex,ASCII的编码与解码
 

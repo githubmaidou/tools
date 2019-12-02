@@ -17,20 +17,21 @@ class dirScan:
             "Referer":"https://www.baidu.com/",
             "User-Agent":"Mozilla/5.0 (Linux;u;Android 4.2.2;zh-cn;) AppleWebKit/534.46 (KHTML,like Gecko) Version/5.1 Mobile Safari/10600.6.3 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)"
                        } 
-        self.url_keyword_file = 'url_keyword.dict'#'url_test.dict'
-        self.file_keyword_file = 'file_keyword.dict'#'file_test.dict'
+        self.url_keyword_file = 'dirname2.dict'#'url_test.dict'
+        self.file_keyword_file = 'filename2.dict'#'file_test.dict'
         self.thread_num = 10
         self.save_file_keywords = ['']
         self.save_url_keywords = ['']
         self.target_url = "http://baidu.com"
         self.scan_level = -1
         self.file_ext = 'php'
-        self.bak_ext = ['zip','rar','tar','tar.gz']
+        self.bak_ext = ['zip','rar','tar','tar.gz','bak']
         self.STOP_FILE = False #禁止文件扫描
         self.STOP_URL = False  #禁止目录扫描
         self.status_code = [200,403]
         self.msg_queue = queue.Queue()
         self.STOP_ME = False
+        self.ignore_case = True
         threading.Thread(target=self._print_msg).start()#日志输出
 
     def _check_404(self,host):
@@ -52,13 +53,19 @@ class dirScan:
         f = open(self.url_keyword_file,'r')
         url_keywords = f.readlines()
         f.close()
-        return [i.strip() for i in url_keywords]
+        if self.ignore_case:
+            return list(set([i.strip().lower() for i in url_keywords]))
+        else:
+            return [i.strip() for i in url_keywords]
 
     def _get_filekeyword(self):
         f = open(self.file_keyword_file,'r')
         file_keywords = f.readlines()
         f.close()
-        return [i.strip() for i in file_keywords]
+        if self.ignore_case:
+            return list(set([i.strip().lower() for i in file_keywords]))
+        else:
+            return [i.strip() for i in file_keywords]
 
     def _get_console_width(self):
         return int(os.get_terminal_size().columns)
@@ -148,6 +155,10 @@ class dirScan:
         """设置文件扫描字典文件路径"""
         self.file_keyword_file = path
 
+    def set_not_ignore_case(self):
+        """ 设置是否忽律大小写"""
+        self.ignore_case = False
+
     def url_keyword_scan(self,keywords):
         for key in keywords:
             key = key.strip()
@@ -179,37 +190,41 @@ class dirScan:
             for ext in self.bak_ext:
                 and_keys.append(sk+'/'+sk.split('/')[-1]+'.'+ext)
         return and_keys  
-    def scan(self,url,ext=False):
-        self.num = 1
-        self.set_target_url(url)
-        if self._check_404(url):
-                self.msg_queue.put("true目标(%s)有404跳转或没有网络" % url)
-                self.STOP_ME = True
-                exit()
-        if ext:
-            self.set_file_ext(ext)
-        else:
-            self.set_file_ext(self._get_script_language(self.target_url))
-        while (len(self.save_url_keywords) > 0 and self.scan_level != 0):
-            file_keywords = self.saveKey_and_fileKey(self.save_url_keywords) #生成下一层文件字典
-            url_keywords = self.saveKey_and_urlKey(self.save_url_keywords)
-            if self.STOP_FILE:
-                scan_list = url_keywords
-            elif self.STOP_URL:
-                scan_list = file_keywords
-                self.scan_level = 1
+    def scan(self,urls,ext=False):
+        for url in urls:
+            url = url.strip()
+            scan_level = self.scan_level
+            self.num = 1
+            self.set_target_url(url)
+            if self._check_404(url):
+                    self.msg_queue.put("true目标(%s)有404跳转或没有网络" % url)
+                    continue
+                    #self.STOP_ME = True
+                    #exit()
+            if ext:
+                self.set_file_ext(ext)
             else:
-                scan_list = url_keywords + file_keywords  #生成下一层路径字典 + 文件字典
-            self.save_url_keywords = []
-            self.scan_level = self.scan_level - 1
-            count = math.ceil(len(scan_list)/self.thread_num)
-            thread_list = []
-            for n in range(self.thread_num+1):
-                thread_list.append(threading.Thread(target=self.url_keyword_scan,args=(scan_list[n*count:(n+1)*count],)))
-            for t in thread_list:
-                t.start()
-            for t in thread_list:
-                t.join()
+                self.set_file_ext(self._get_script_language(self.target_url))
+            while (len(self.save_url_keywords) > 0 and scan_level != 0):
+                file_keywords = self.saveKey_and_fileKey(self.save_url_keywords) #生成下一层文件字典
+                url_keywords = self.saveKey_and_urlKey(self.save_url_keywords)
+                if self.STOP_FILE:
+                    scan_list = url_keywords
+                elif self.STOP_URL:
+                    scan_list = file_keywords
+                    scan_level = 1
+                else:
+                    scan_list = url_keywords + file_keywords  #生成下一层路径字典 + 文件字典
+                scan_level = scan_level - 1
+                count = math.ceil(len(scan_list)/self.thread_num)
+                thread_list = []
+                for n in range(self.thread_num+1):
+                    thread_list.append(threading.Thread(target=self.url_keyword_scan,args=(scan_list[n*count:(n+1)*count],)))
+                for t in thread_list:
+                    t.start()
+                for t in thread_list:
+                    t.join()
+                self.save_url_keywords = ['']
         self.msg_queue.put('trueScan End')
         self.STOP_ME = True
 def get_argv(alist,astr):
@@ -234,18 +249,23 @@ if __name__ == '__main__':
     s.set_status_code([200,403]) if not c else s.set_status_code([int(i) for i in c.strip().split(',')])
     l = get_argv(sys.argv,'-l')
     s.set_scan_level(2) if not l else s.set_scan_level(int(l))
-    url = get_argv(sys.argv,'-u')
+    urls = [get_argv(sys.argv,'-u')] if in_argv(sys.argv,'-u') else []
+    if in_argv(sys.argv,'-U'):
+        urls = open(get_argv(sys.argv,'-U'),'r').readlines()
     e = False if not in_argv(sys.argv,'-e') else get_argv(sys.argv,'-e')
     if in_argv(sys.argv,'-fc'):s.set_stop_file() 
     if in_argv(sys.argv,'-dc'):s.set_stop_url()
-    if not in_argv(sys.argv,'-u') or in_argv(sys.argv,'-h'):
+    if in_argv(sys.argv,'-i'):s.set_not_ignore_case()
+    if (not in_argv(sys.argv,'-u') and not in_argv(sys.argv,'-U')) or in_argv(sys.argv,'-h'):
         print("-t       指定线程")
         print("-c       指定返回HTTP状态码eg:-c 200,500")
         print("-l       指定扫描深度")
         print("-u       指定目标URL")
+        print("-U       指定目标URL文件,每行一个")
         print("-e       指定文件后缀")
         print("-fc      关闭文件扫描")
         print("-dc      关闭目录扫描")
+        print("-i       开启大小写敏感")
         s.set_stop_me()
     else:
-        s.scan(url,e)
+        s.scan(urls,e)

@@ -21,6 +21,9 @@
 	brute.py 			爆破工具，暂时只支持ssh
 	sub.py				多个接口查询子域名
 	iis_shortname_Scan.py	复制lijiejie的iis短文件名漏洞利用工具
+	tftp.py				python 实现tftp下载工具，UDP协议
+	socks5.py2			python2下无需三方库实现socks5代理，来原互联网
+	simple_http.py2			python2下无需三方库现实web服务与上传simple_http.py2	
 	/dirScan		    目录扫描项目
 	/passdict                  根据关键字生成密码
 	/cmd_bash                   常用的命令语句

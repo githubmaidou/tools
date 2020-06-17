@@ -4,12 +4,22 @@ import socket
 import time
 import sys
 import urllib3
+import json
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 try:
     import config
-    vt_key = config.vt_key
+    keys = config.__dir__()
+    if "vt_key" in keys:
+        vt_key = config.vt_key
+    else:
+        vt_key=""
+    if "sec_keys" in keys:
+        #是数组，这个接口只有第个月只有50次，需要多个key
+        sec_keys = config.sec_keys
+    else:
+        sec_keys=[]
 except:
-    vt_key = ""
+    print("未发现接口key")
     
 
 
@@ -27,6 +37,23 @@ class subdomain:
         ]  # api接口列表
         self.domain = ""
         #self.start(self.domain)
+    def securitytrails_api(self,domain):
+        api_url = "https://api.securitytrails.com/v1/domain/%s/subdomains?children_only=false" % domain
+        for key in sec_keys:
+            headers = {
+                        'accept': "application/json",
+                        'apikey': key,
+                        }
+            req = requests.get(api_url,headers,verify=False)
+            if req.status_code == 200:
+                json_text = json.loads(req.text)
+                if "subdomains" not in json_text.keys():
+                    continue
+                subs = json_text['subdomains']
+                subdomains = [sub+"."+domain for sub in subs]
+                return subdomains
+        return []
+        
 
     def req_text(self, method, url, data, headers):
         if not headers:
@@ -59,6 +86,7 @@ class subdomain:
     
     def api_start(self,domain):
         subdomains = []
+        subdomains = subdomains + self.securitytrails_api(domain)
         subip={}
         for api in self.api_list:
             data=api['data'].replace('{target}',domain)

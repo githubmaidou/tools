@@ -13,8 +13,6 @@
 	ip2domains.py		    使用virustotal.com的查询接口，实现ip反查域名，子域名查询。效果不错
 	t3scan.py		    T3协议扫描，建议使用64位python
 	nmap_oG.py		    对nmap -oG 的输出进行格式化127.0.0.1:80
-	shellcode_injection.py	    shellcode注入工具,用pyinstaller转成exe后可免杀。使用：shellcode_injection.exe notepad.exe[进程名]，可先起一个notepad
-	shellcode_injection.exe	    将shellcode_injection.py转exe生成，使用：shellcode_injection.exe shellcode[\xff] 进程名
 	weblogic_hash.py	    weblogic 6位随机路径名计算
     chunked.py		    复制t00ls w8ayy写的分块传输脚本。chunked.py "id=1' and 1=1 and ''='"
     ips2ipc.py		    ips2ipc.py /tmp/ip 把文件/tmp/ip内的独立IP转换成ip段,127.0.0.1;127.0.0.100 转换成127.0.0.1-100
@@ -26,8 +24,4 @@
 	simple_http.py2			python2下无需三方库现实web服务与上传simple_http.py2	
 	/dirScan		    目录扫描项目
 	/passdict                  根据关键字生成密码
-	/cmd_bash                   常用的命令语句
-	/burpext		    burp 插件。报错SQL注入检测	
-	/workflows                  Alfred workflows插件
-		/strencode.py           alfred workflows,字符编码/解码小插件,支持Md5,Base64,Hex,ASCII的编码与解码
 

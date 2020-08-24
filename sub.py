@@ -28,10 +28,13 @@ class subdomain:
         self.api_list = [
             {'method':'get','url':"https://site.ip138.com/{target}/domain.htm",'data':"ok=1",'headers':{},'re':"/([a-zA-Z0-9_\-\.]*?{target})/"},
             {'method': 'get', 'url': "http://ce.baidu.com/index/getRelatedSites",
-                'data': "site_address={target}", 'headers': {}, 're': "domain\":\"([a-zA-Z0-9_\-\.]*?)\","}, #baidu接口
+                'data': "site_address={target}", 'headers': {}, 're': "domain\":\"([a-zA-Z0-9_\-\.]*?)\","}, #baidu接
             {'method':'get','url':"https://www.virustotal.com/vtapi/v2/domain/report",'data':"apikey=%s&domain={target}" % vt_key,'headers':{'Origin': 'https://developers.virustotal.com'},'re':"\"([a-zA-Z0-9_\-\.]*?)\","},
             {"method":"get","url":"https://crt.sh/","data":"q=%.{target}&output=json","headers":{"accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"},"re":"name_value\":\"([a-zA-Z0-9_\-\.]*?)\""},
             {"method":"post","url":"https://hackertarget.com/find-dns-host-records/","data":"theinput={target}&thetest=hostsearch&name_of_nonce_field=8a94567cc2","headers":{},"re":"([a-zA-Z0-9_\-\.]*?{target}),"},
+            {'method':'get','url':"https://rapiddns.io/subdomain/{target}#result",'data':"ok=2",'headers':{"User-Agent": "curl/7.64.1","Referer": "https://rapiddns.io/subdomain"},'re':"//([a-zA-Z0-9_\-\.]*?{target})\""},
+            {'method':'get','url':"https://dns.bufferover.run/dns?q=.{target}",'data':"ok=2",'headers':{"User-Agent": "curl/7.64.1","Referer": "https://dns.bufferover.run"},'re':",([a-zA-Z0-9_\-\.]*?{target})\""},
+            {'method':'get','url':"https://searchdns.netcraft.com/?host={target}&restriction=site contains",'data':"ok=2",'headers':{"User-Agent": "curl/7.64.1","Referer": "https://searchdns.netcraft.com"},'re':"//([a-zA-Z0-9_\-\.]*?{target})\""},
             
             
         ]  # api接口列表
@@ -44,7 +47,10 @@ class subdomain:
                         'accept': "application/json",
                         'apikey': key,
                         }
-            req = requests.get(api_url,headers,verify=False)
+            try:
+                req = requests.get(api_url,headers,verify=False)
+            except:
+                return []
             if req.status_code == 200:
                 json_text = json.loads(req.text)
                 if "subdomains" not in json_text.keys():
@@ -62,9 +68,16 @@ class subdomain:
             }
         if method.upper() == 'GET':
             url = url.strip()+'?'+data.strip()
-            req = requests.get(url, headers=headers,verify=False)
+            try:
+                
+                req = requests.get(url, headers=headers,verify=False)
+            except:
+                return ""
         elif method.upper() == 'POST':
-            req = requests.post(url, data, headers=headers,verify=False)
+            try:
+                req = requests.post(url, data, headers=headers,verify=False)
+            except:
+                return ""
         else:
             return ""
         if req.status_code == 200:

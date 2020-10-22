@@ -20,6 +20,7 @@
 	sub.py				多个接口查询子域名
 	iis_shortname_Scan.py	复制lijiejie的iis短文件名漏洞利用工具
 	tftp.py				python 实现tftp下载工具，UDP协议
+ 	aliyunECS.py			aliyun ECS命令执行并回显,需要先用pip安装aliyun sdk
 	socks5.py2			python2下无需三方库实现socks5代理，来原互联网
 	simple_http.py2			python2下无需三方库现实web服务与上传simple_http.py2	
 	/dirScan		    目录扫描项目

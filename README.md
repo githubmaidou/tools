@@ -26,31 +26,32 @@
 
 ---
 ## 一些使用技巧
+* 查找cname解析
+`python3 sub.py baidu.com --sub|`[dnsprobe ](https://github.com/projectdiscovery/dnsprobe)` -r cname`
+* 查询子域名信息
 ```bash
-查找cname解析
-python3 sub.py baidu.com --sub|[dnsprobe](https://github.com/projectdiscovery/dnsprobe) -r cname
-```
-```bash
-查询子域名信息
 python3 sub.py baidu.com
 python3 sub.py baidu.com --sub > baidu.com.sub
-
-扫描Title
+```
+* 扫描Title
+```bash
 python3 scanTitle.py baidu.com.sub
-
-子域名转IP
+```
+* 子域名转IP
+```bash
 python3 domain2ip.py baidu.com.sub
 提取IP正则
 ([0-9]{1,3}\.){3}[0-9]{1,3}
-
-单一的IP转成IP段
+```
+* 单一的IP转成IP段
+```bash
 python3 ips2ipc.py baidu.com.ips > baidu.com.ipc
 192.168.1.1
 192.168.1.9
 转成192.168.1-9
 ```
+* nmap -oG 扫描结果转换
 ```bash
-nmap -oG 扫描结果转换
 nmap -n -T4 --open -iL baidu.com.ipc -oG baidu.com.nmap
 python3 nmap_oG.py baidu.com.nmap
 ```

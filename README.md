@@ -56,3 +56,15 @@ nmap -n -T4 --open -iL baidu.com.ipc -oG baidu.com.nmap
 python3 nmap_oG.py baidu.com.nmap
 ```
 
+## 缺失的config.py
+```python
+#https://www.virustotal.com 免费注册获取api key
+vt_key="9************"
+
+#https://securitytrails.com/ 免费注册获取api key
+sec_keys = ["9************"]
+
+#https://fofa.so/ 注册获取api key
+fofa_email="9******@qq.com"
+fofa_key="9************"
+```

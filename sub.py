@@ -5,6 +5,7 @@ import time
 import sys
 import urllib3
 import json
+import fofa
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 try:
     import config
@@ -35,6 +36,13 @@ class subdomain:
             {'method':'get','url':"https://rapiddns.io/subdomain/{target}#result",'data':"ok=2",'headers':{"User-Agent": "curl/7.64.1","Referer": "https://rapiddns.io/subdomain"},'re':"//([a-zA-Z0-9_\-\.]*?{target})\""},
             {'method':'get','url':"https://dns.bufferover.run/dns?q=.{target}",'data':"ok=2",'headers':{"User-Agent": "curl/7.64.1","Referer": "https://dns.bufferover.run"},'re':",([a-zA-Z0-9_\-\.]*?{target})\""},
             {'method':'get','url':"https://searchdns.netcraft.com/?host={target}&restriction=site contains",'data':"ok=2",'headers':{"User-Agent": "curl/7.64.1","Referer": "https://searchdns.netcraft.com"},'re':"//([a-zA-Z0-9_\-\.]*?{target})\""},
+            {'method':'get','url':"https://otx.alienvault.com/api/v1/indicators/domain/{target}/passive_dns",'data':"ok=1",'headers':{},'re':"\"([a-zA-Z0-9_\-\.]*?{target})\","},
+            {'method':'get','url':"https://api.certspotter.com/v1/issuances?domain={target}&include_subdomains=true&expand=dns_names",'data':"ok=1",'headers':{},'re':"\"([a-zA-Z0-9_\-\.]*?{target})\""},
+            {'method':'get','url':"https://sonar.omnisint.io/subdomains/{target}",'data':"ok=1",'headers':{},'re':"\"([a-zA-Z0-9_\-\.]*?{target})\","},
+            {'method':'get','url':"https://www.threatcrowd.org/searchApi/v2/domain/report/?domain={target}",'data':"ok=1",'headers':{},'re':"\"([a-zA-Z0-9_\-\.]*?{target})\","},
+            {'method':'get','url':"https://api.threatminer.org/v2/domain.php?q={target}&rt=5",'data':"ok=1",'headers':{},'re':"\"([a-zA-Z0-9_\-\.]*?{target})\""},
+            {'method':'get','url':"http://web.archive.org/cdx/search/cdx?url=*.{target}/*&output=txt&fl=original&collapse=urlkey",'data':"ok=1",'headers':{},'re':"//([a-zA-Z0-9_\-\.]*?{target})/"},
+
             
             
         ]  # api接口列表
@@ -48,7 +56,7 @@ class subdomain:
                         'apikey': key,
                         }
             try:
-                req = requests.get(api_url,headers,verify=False)
+                req = requests.get(api_url,headers,timeout=60,verify=False)
             except:
                 return []
             if req.status_code == 200:
@@ -70,18 +78,19 @@ class subdomain:
             url = url.strip()+'?'+data.strip()
             try:
                 
-                req = requests.get(url, headers=headers,verify=False)
+                req = requests.get(url, headers=headers,timeout=60,verify=False)
             except:
                 return ""
         elif method.upper() == 'POST':
             try:
-                req = requests.post(url, data, headers=headers,verify=False)
+                req = requests.post(url, data, headers=headers,timeout=60,verify=False)
             except:
                 return ""
         else:
             return ""
         if req.status_code == 200:
             text = req.text
+            print(url,len(text))    
         else:
             text = ""
         return text
@@ -119,3 +128,7 @@ if __name__ == '__main__':
     for s1 in list(set(s)):
         if domain in s1:
             print(s1)
+    if '--sub' in sys.argv:
+        exit()
+    print("-"*30 + "fofa search" + "-"*30)
+    fofa.search("domain=\"%s\"||cert=\"%s\"" % (domain,domain))

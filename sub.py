@@ -5,7 +5,10 @@ import time
 import sys
 import urllib3
 import json
-import fofa
+try:
+    import fofa
+except:
+    sys.argv.append('--sub')
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 try:
     import config

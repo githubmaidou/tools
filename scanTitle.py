@@ -8,7 +8,7 @@ import os
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 # 禁用安全请求警告
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
+onlyHttp = False  # 只输出带http/https域名
 def getUrls(filename):
     f = open(filename,'r',encoding="utf8")
     lines = f.readlines()
@@ -48,7 +48,7 @@ def getTitle(url):
     a4 = int(console_width*aa[1])
     try:
         http = check_http(url)
-        if http:
+        if http and not onlyHttp:
             url = "%s://%s/" % (http,url)
             reqs = requests.get(url,timeout=10,verify=False)
             if reqs.status_code == 200:
@@ -70,6 +70,9 @@ def getTitle(url):
             elif reqs.status_code in [404,403]:
                 pass
                 print(url.ljust(a5),server.ljust(a4),reqs.status_code)
+        else:
+            if http:
+                print("%s://%s/" % (http,url))
     except Exception as e:
         pass
         #print(e)
@@ -79,7 +82,11 @@ def start(filename,threads=2):
         while threading.active_count() > int(threads):
             time.sleep(0.5)
         threading.Thread(target=getTitle,args=(url,)).start()
-if len(sys.argv) >2:
-    start(sys.argv[1],sys.argv[2]) 
-else:
-    start(sys.argv[1])
+if __name__ == '__main__':
+    if '-s' in sys.argv:
+        onlyHttp = True
+        sys.argv.remove('-s')
+    if len(sys.argv) >2:
+        start(sys.argv[1],sys.argv[2]) 
+    else:
+        start(sys.argv[1])

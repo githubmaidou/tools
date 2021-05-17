@@ -19,6 +19,7 @@
  	aliyunECS.py 		    aliyun ECS命令执行并回显,需要先用pip安装aliyun sdk
 	fofa.py 		    简单的fofa搜索工具,需要配置key
 	redisWriteFile.py 	    redis写文件工具,支持python2,python3 会有点bug
+	mssqlC2H.py 		    mssql写文件时有中文路径，hex编码错误
 	socks5.py2 		    python2下无需三方库实现socks5代理，来原互联网
 	simple_http.py2 	    python2下无需三方库现实web服务与上传simple_http.py2	
 	/dirScan		    目录扫描项目

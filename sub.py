@@ -93,7 +93,6 @@ class subdomain:
             return ""
         if req.status_code == 200:
             text = req.text
-            print(url,len(text))    
         else:
             text = ""
         return text

@@ -17,7 +17,9 @@ class dirScan:
             "Referer":"https://www.baidu.com/",
             "User-Agent":"Mozilla/5.0 (Linux;u;Android 4.2.2;zh-cn;) AppleWebKit/534.46 (KHTML,like Gecko) Version/5.1 Mobile Safari/10600.6.3 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)"
                        } 
+        #self.url_keyword_file = 'weblogic.dict'#'url_test.dict'
         self.url_keyword_file = 'dirname2.dict'#'url_test.dict'
+        #self.file_keyword_file = 'filename2.dict'#'file_test.dict'
         self.file_keyword_file = 'filename2.dict'#'file_test.dict'
         self.thread_num = 10
         self.save_file_keywords = ['']
@@ -35,9 +37,12 @@ class dirScan:
         self.re_keyword = False #对文件内容进行匹配，基于正则。对抗404重定向
         self.STOP_ME = False
         self.ignore_case = True #忽略目标大小写
+        self.__no_check = True
         threading.Thread(target=self._print_msg).start()#日志输出
 
     def _check_404(self,host):
+        if self.__no_check:
+            return
         url = host + "/check_404_"+str(int(time.time()))
         code = self._req_code(url)
         if code in [200,520]:
@@ -47,9 +52,9 @@ class dirScan:
         url = url if url[:4] == 'http' else 'http://' + url
         try:
             if self.proxy:
-                req = requests.get(url,headers=self.headers,timeout=self.timeout,proxies=self.proxy)
+                req = requests.get(url,headers=self.headers,timeout=self.timeout,proxies=self.proxyi,allow_redirects=False)
             else:
-                req = requests.get(url,headers=self.headers,timeout=self.timeout)
+                req = requests.get(url,headers=self.headers,timeout=self.timeout,allow_redirects=False)
             if self.re_keyword:
                 r=re.compile(self.re_keyword)
                 if not r.search(req.text):
@@ -110,6 +115,7 @@ class dirScan:
             if _msg[:4] == 'true':
                 sys.stdout.write('\r'+_msg[4:].ljust(_console_width-1)+'\n')
             else:
+                
                 sys.stdout.write('\r'+_msg.ljust(_console_width-(self._zh_len(_msg)-len(_msg))))
 
                         

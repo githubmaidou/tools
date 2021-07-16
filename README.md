@@ -22,6 +22,7 @@
 	mssqlC2H.py 		    mssql写文件时有中文路径，hex编码错误
 	socks5.py2 		    python2下无需三方库实现socks5代理，来原互联网
 	simple_http.py2 	    python2下无需三方库现实web服务与上传simple_http.py2	
+	cms.rb			    whatweb CMS指纹，放到plugins目录下
 	/dirScan		    目录扫描项目
 	/passdict 		    根据关键字生成密码
 

@@ -38,6 +38,7 @@ class dirScan:
         self.STOP_ME = False
         self.ignore_case = True #忽略目标大小写
         self.__no_check = True
+        self.request_method = "get" #请求方式
         threading.Thread(target=self._print_msg).start()#日志输出
 
     def _check_404(self,host):
@@ -51,11 +52,16 @@ class dirScan:
     def _req_code(self,url):
         url = url if url[:4] == 'http' else 'http://' + url
         try:
+            if self.request_method.lower() not in ["get","head","post","put","delete"]:
+                exit("请求方式不存在")
             if self.proxy:
-                req = requests.get(url,headers=self.headers,timeout=self.timeout,proxies=self.proxyi,allow_redirects=False)
+                    __mreq = getattr(requests,self.request_method)
+                    req = __req(url,headers=self.headers,timeout=self.timeout,proxies=self.proxyi,allow_redirects=False)
+
             else:
-                req = requests.get(url,headers=self.headers,timeout=self.timeout,allow_redirects=False)
-            if self.re_keyword:
+                    __mreq = getattr(requests,self.request_method)
+                    req = __mreq(url,headers=self.headers,timeout=self.timeout,allow_redirects=False)
+            if self.re_keyword and self.request_method in ["get","post"]:
                 r=re.compile(self.re_keyword)
                 if not r.search(req.text):
                     code = 200
@@ -63,7 +69,8 @@ class dirScan:
                     code = 404
             else:
                 code = req.status_code
-        except:
+        except Exception as e:
+            print(e)
             code = 520 #网络不可达 
         return code
 
@@ -187,6 +194,9 @@ class dirScan:
         """ 当开启404重定向时，对返回包进行正则匹配来判断页面是否存在"""
         self.re_keyword = re
 
+    def set_request_method(self,method="get"):
+        self.request_method = method.lower()
+
     def url_keyword_scan(self):
         while not self.STOP_ME and not self.target_queue.empty():
             key = self.target_queue.get()
@@ -223,8 +233,9 @@ class dirScan:
                 self.target_queue.put(sk+'/'+fk+'.'+self.file_ext)
         for sk in keywords: #加入目录名为备份的可能
             for ext in self.bak_ext:
-                self.target_queue.put(sk+'/'+sk.split('/')[-1]+'.'+ext)
-                self.target_queue.put('/'.join(sk.split('/')[:-1])+'/'+sk.split('/')[-1]+'.'+ext)    
+                if not sk.endswith("."+ext):#避免重复检测死循环a.bak a.bak.bak a.bak.bak.bak
+                    self.target_queue.put(sk+'/'+sk.split('/')[-1]+'.'+ext)
+                    self.target_queue.put('/'.join(sk.split('/')[:-1])+'/'+sk.split('/')[-1]+'.'+ext)    
 
     def scan(self,urls,ext=False):
         for url in urls:
@@ -286,6 +297,7 @@ if __name__ == '__main__':
     if in_argv(sys.argv,'-fc'):s.set_stop_file() 
     if in_argv(sys.argv,'-dc'):s.set_stop_url()
     if in_argv(sys.argv,'-i'):s.set_not_ignore_case()
+    if in_argv(sys.argv,'-H'):s.set_request_method("head")
     k = get_argv(sys.argv,'-k')
     if k:
         s.set_re_keyword(k)
@@ -300,6 +312,7 @@ if __name__ == '__main__':
         print("-dc      关闭目录扫描")
         print("-i       开启大小写敏感")
         print("-k       404关键字,支持正则")
+        print("-H       使用HEAD方式请求，默认为GET")
         s.set_stop_me()
     else:
         try:

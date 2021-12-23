@@ -39,6 +39,8 @@ class dirScan:
         self.ignore_case = True #忽略目标大小写
         self.__no_check = True
         self.request_method = "get" #请求方式
+        self.request_error_max = 12 #最大连接错误次数
+        self.request_error_count =0 #当访问成功后会被重置为0
         threading.Thread(target=self._print_msg).start()#日志输出
 
     def _check_404(self,host):
@@ -69,9 +71,10 @@ class dirScan:
                     code = 404
             else:
                 code = req.status_code
+                self.request_error_count = 0
         except Exception as e:
-            print(e)
             code = 520 #网络不可达 
+            self.request_error_count = self.request_error_count + 1
         return code
 
     def _get_urlkeyword(self):
@@ -124,6 +127,9 @@ class dirScan:
             else:
                 
                 sys.stdout.write('\r'+_msg.ljust(_console_width-(self._zh_len(_msg)-len(_msg))))
+            if self.request_error_count > self.request_error_max:
+                self.STOP_ME = True
+                print("请求错误次数太多! Count: %s" % self.request_error_count)
 
                         
     def set_proxy(self,proxy):
@@ -133,6 +139,10 @@ class dirScan:
     def set_timeout(self,t):
         """设置请求超时时间"""
         self.timeout = t
+
+    def set_request_error_max(self,i):
+        """设置最大请求错误次数"""
+        self.request_error_max = int(i)
 
     def set_stop_me(self,t=True):
         """关闭输出"""

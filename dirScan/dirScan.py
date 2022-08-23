@@ -8,7 +8,7 @@ import queue
 import os
 class dirScan:
     def __init__(self):
-        self.proxy = {}
+        self.proxy = None
         self.timeout = 10
         self.headers = { 
             "Accept":"text/html,application/xhtml+xml,application/xml;",
@@ -58,11 +58,11 @@ class dirScan:
                 exit("请求方式不存在")
             if self.proxy:
                     __mreq = getattr(requests,self.request_method)
-                    req = __req(url,headers=self.headers,timeout=self.timeout,proxies=self.proxyi,allow_redirects=False)
+                    req = __req(url,headers=self.headers,timeout=self.timeout,proxies=self.proxy,verify=False,allow_redirects=False)
 
             else:
                     __mreq = getattr(requests,self.request_method)
-                    req = __mreq(url,headers=self.headers,timeout=self.timeout,allow_redirects=False)
+                    req = __mreq(url,headers=self.headers,timeout=self.timeout,verify=False,allow_redirects=False)
             if self.re_keyword and self.request_method in ["get","post"]:
                 r=re.compile(self.re_keyword)
                 if not r.search(req.text):

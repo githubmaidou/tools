@@ -26,6 +26,7 @@
 	f5_CookieDecode.py	    f5 cookie解码为ip:port,python3 f5_CookieDecode.py 1677787402.36895.0000
 	npmSearch.py		    通过package.json,搜索不有注册的包,支持url或本地文件
 	bigData.py		    多个资产发现接口，查数据	
+	objectSid2SID.py	    取巧获取ldapsearch结果中objectSid和AllowedToActOnBehalfOfOtherIdentity包含的sid; python3 objectSid2SID.py [objectSid Base64 String] 
 	/dirScan		    目录扫描项目
 	/passdict 		    根据关键字生成密码
 
